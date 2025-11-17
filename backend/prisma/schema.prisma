@@ -1,0 +1,201 @@
+// Prisma schema for Battle Dawn
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  username      String   @unique
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  level         Int      @default(1)
+  experience    BigInt   @default(0)
+  allianceId    String?  @map("alliance_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  lastActiveAt  DateTime @default(now()) @map("last_active_at")
+  wins          Int      @default(0)
+  losses        Int      @default(0)
+
+  alliance      Alliance? @relation(fields: [allianceId], references: [id])
+  colonies      Colony[]
+  battles       Battle[]  @relation("BattleAttacker")
+  defendedBattles Battle[] @relation("BattleDefender")
+  sentMessages  ChatMessage[] @relation("MessageSender")
+
+  @@map("users")
+}
+
+model Colony {
+  id                String   @id @default(uuid())
+  userId            String   @map("user_id")
+  name              String
+  positionX         Int      @map("position_x")
+  positionY         Int      @map("position_y")
+  metalAmount       BigInt   @default(1000) @map("metal_amount")
+  metalProduction   Float    @default(0) @map("metal_production")
+  oilAmount         BigInt   @default(500) @map("oil_amount")
+  oilProduction     Float    @default(0) @map("oil_production")
+  energyAmount      BigInt   @default(300) @map("energy_amount")
+  energyProduction  Float    @default(0) @map("energy_production")
+  foodAmount        BigInt   @default(800) @map("food_amount")
+  foodProduction    Float    @default(0) @map("food_production")
+  workersAmount     BigInt   @default(50) @map("workers_amount")
+  isMainColony      Boolean  @default(false) @map("is_main_colony")
+  foundedAt         DateTime @default(now()) @map("founded_at")
+  lastResourceUpdate DateTime @default(now()) @map("last_resource_update")
+  defenseRating     Int      @default(0) @map("defense_rating")
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  buildings         Building[]
+  armies            Army[]
+  attackedBattles   Battle[] @relation("BattleDefenderColony")
+  research          Research[]
+
+  @@index([userId])
+  @@index([positionX, positionY])
+  @@map("colonies")
+}
+
+model Building {
+  id                    String   @id @default(uuid())
+  colonyId              String   @map("colony_id")
+  type                  String
+  level                 Int      @default(1)
+  positionX             Int      @map("position_x")
+  positionY             Int      @map("position_y")
+  constructionStartTime DateTime? @map("construction_start_time")
+  constructionEndTime   DateTime? @map("construction_end_time")
+  isUnderConstruction   Boolean  @default(false) @map("is_under_construction")
+
+  colony                Colony   @relation(fields: [colonyId], references: [id], onDelete: Cascade)
+
+  @@index([colonyId])
+  @@map("buildings")
+}
+
+model Army {
+  id                  String   @id @default(uuid())
+  colonyId            String   @map("colony_id")
+  name                String
+  positionX           Int      @map("position_x")
+  positionY           Int      @map("position_y")
+  destinationX        Int?     @map("destination_x")
+  destinationY        Int?     @map("destination_y")
+  isMoving            Boolean  @default(false) @map("is_moving")
+  movementStartTime   DateTime? @map("movement_start_time")
+  movementEndTime     DateTime? @map("movement_end_time")
+
+  colony              Colony   @relation(fields: [colonyId], references: [id], onDelete: Cascade)
+  units               Unit[]
+  battles             Battle[] @relation("BattleAttackerArmy")
+
+  @@index([colonyId])
+  @@map("armies")
+}
+
+model Unit {
+  id                String   @id @default(uuid())
+  armyId            String   @map("army_id")
+  type              String
+  currentHealth     Int      @map("current_health")
+  experience        Int      @default(0)
+  level             Int      @default(1)
+  isTraining        Boolean  @default(false) @map("is_training")
+  trainingStartTime DateTime? @map("training_start_time")
+  trainingEndTime   DateTime? @map("training_end_time")
+
+  army              Army     @relation(fields: [armyId], references: [id], onDelete: Cascade)
+
+  @@index([armyId])
+  @@map("units")
+}
+
+model Battle {
+  id                String   @id @default(uuid())
+  attackerUserId    String   @map("attacker_user_id")
+  defenderUserId    String   @map("defender_user_id")
+  attackerArmyId    String   @map("attacker_army_id")
+  defenderColonyId  String   @map("defender_colony_id")
+  locationX         Int      @map("location_x")
+  locationY         Int      @map("location_y")
+  status            String   @default("PENDING")
+  startTime         DateTime @default(now()) @map("start_time")
+  endTime           DateTime? @map("end_time")
+  victor            String?
+  battleData        Json?    @map("battle_data")
+
+  attackerUser      User     @relation("BattleAttacker", fields: [attackerUserId], references: [id])
+  defenderUser      User     @relation("BattleDefender", fields: [defenderUserId], references: [id])
+  attackerArmy      Army     @relation("BattleAttackerArmy", fields: [attackerArmyId], references: [id])
+  defenderColony    Colony   @relation("BattleDefenderColony", fields: [defenderColonyId], references: [id])
+
+  @@index([attackerUserId])
+  @@index([defenderUserId])
+  @@map("battles")
+}
+
+model Alliance {
+  id              String   @id @default(uuid())
+  name            String   @unique
+  tag             String   @unique
+  leaderId        String   @map("leader_id")
+  description     String   @default("")
+  createdAt       DateTime @default(now()) @map("created_at")
+  wins            Int      @default(0)
+  maxMembers      Int      @default(50) @map("max_members")
+  isRecruiting    Boolean  @default(true) @map("is_recruiting")
+
+  members         User[]
+  chatMessages    ChatMessage[]
+
+  @@map("alliances")
+}
+
+model ChatMessage {
+  id          String   @id @default(uuid())
+  allianceId  String   @map("alliance_id")
+  senderId    String   @map("sender_id")
+  message     String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  alliance    Alliance @relation(fields: [allianceId], references: [id], onDelete: Cascade)
+  sender      User     @relation("MessageSender", fields: [senderId], references: [id])
+
+  @@index([allianceId])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+model Research {
+  id              String   @id @default(uuid())
+  colonyId        String   @map("colony_id")
+  type            String
+  startTime       DateTime @map("start_time")
+  completionTime  DateTime @map("completion_time")
+  isCompleted     Boolean  @default(false) @map("is_completed")
+
+  colony          Colony   @relation(fields: [colonyId], references: [id], onDelete: Cascade)
+
+  @@index([colonyId])
+  @@map("research")
+}
+
+model SpyMission {
+  id                  String   @id @default(uuid())
+  operativeColonyId   String   @map("operative_colony_id")
+  targetColonyId      String   @map("target_colony_id")
+  operation           String
+  startTime           DateTime @map("start_time")
+  completionTime      DateTime @map("completion_time")
+  status              String   @default("IN_PROGRESS")
+  result              Json?
+
+  @@index([operativeColonyId])
+  @@index([targetColonyId])
+  @@map("spy_missions")
+}
