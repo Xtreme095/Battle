@@ -5,9 +5,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.battledawn.presentation.ui.screens.alliance.AllianceScreen
+import com.battledawn.presentation.ui.screens.battle.BattleScreen
 import com.battledawn.presentation.ui.screens.colony.ColonyScreen
+import com.battledawn.presentation.ui.screens.leaderboard.LeaderboardScreen
 import com.battledawn.presentation.ui.screens.login.LoginScreen
 import com.battledawn.presentation.ui.screens.map.MapScreen
+import com.battledawn.presentation.ui.screens.research.ResearchScreen
+import com.battledawn.presentation.ui.screens.settings.SettingsScreen
 import com.battledawn.presentation.ui.screens.splash.SplashScreen
 
 /**
@@ -26,6 +31,7 @@ sealed class Screen(val route: String) {
     object Battle : Screen("battle/{battleId}") {
         fun createRoute(battleId: String) = "battle/$battleId"
     }
+    object Leaderboard : Screen("leaderboard")
     object Profile : Screen("profile")
     object Settings : Screen("settings")
 }
@@ -85,6 +91,50 @@ fun BattleDawnNavHost(
                     }
                 )
             }
+        }
+
+        composable(Screen.Research.route) {
+            ResearchScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable(Screen.Alliance.route) {
+            AllianceScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable(Screen.Battle.route) { backStackEntry ->
+            val battleId = backStackEntry.arguments?.getString("battleId")
+            if (battleId != null) {
+                BattleScreen(
+                    battleId = battleId,
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+        }
+
+        composable(Screen.Leaderboard.route) {
+            LeaderboardScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }
