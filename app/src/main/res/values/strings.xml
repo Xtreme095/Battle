@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Battle Dawn</string>
+
+    <!-- General -->
+    <string name="loading">Loading…</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+
+    <!-- Auth -->
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="logout">Logout</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+
+    <!-- Game -->
+    <string name="my_colony">My Colony</string>
+    <string name="world_map">World Map</string>
+    <string name="alliance">Alliance</string>
+    <string name="units">Units</string>
+    <string name="research">Research</string>
+    <string name="buildings">Buildings</string>
+
+    <!-- Resources -->
+    <string name="metal">Metal</string>
+    <string name="oil">Oil</string>
+    <string name="energy">Energy</string>
+    <string name="food">Food</string>
+    <string name="workers">Workers</string>
+
+    <!-- Actions -->
+    <string name="build">Build</string>
+    <string name="upgrade">Upgrade</string>
+    <string name="train">Train</string>
+    <string name="attack">Attack</string>
+    <string name="defend">Defend</string>
+    <string name="scout">Scout</string>
+
+    <!-- Buildings -->
+    <string name="metal_mine">Metal Mine</string>
+    <string name="oil_refinery">Oil Refinery</string>
+    <string name="energy_plant">Energy Plant</string>
+    <string name="farm">Farm</string>
+    <string name="barracks">Barracks</string>
+    <string name="research_center">Research Center</string>
+
+    <!-- Units -->
+    <string name="infantry">Infantry</string>
+    <string name="vehicles">Vehicles</string>
+    <string name="tanks">Tanks</string>
+
+    <!-- Notifications -->
+    <string name="notification_attack">Your colony is under attack!</string>
+    <string name="notification_construction_complete">Construction completed</string>
+    <string name="notification_research_complete">Research completed</string>
+</resources>
