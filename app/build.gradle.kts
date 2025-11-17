@@ -123,6 +123,9 @@ dependencies {
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // Socket.io for WebSocket
+    implementation("io.socket:socket.io-client:2.1.0")
+
     // Timber for logging
     implementation("com.jakewharton.timber:timber:5.0.1")
 
