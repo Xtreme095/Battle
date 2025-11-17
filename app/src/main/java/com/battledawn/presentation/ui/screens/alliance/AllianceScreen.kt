@@ -11,6 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.battledawn.presentation.ui.components.AllianceChatComponent
+import com.battledawn.presentation.viewmodel.AllianceViewModel
 
 /**
  * Alliance management screen
@@ -18,10 +21,14 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllianceScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: AllianceViewModel = hiltViewModel()
 ) {
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Overview", "Members", "Diplomacy", "War")
+    val tabs = listOf("Overview", "Members", "Chat", "Diplomacy", "War")
+
+    val chatMessages by viewModel.chatMessages.collectAsState()
+    val currentAlliance by viewModel.currentAlliance.collectAsState()
 
     Scaffold(
         topBar = {
@@ -62,8 +69,19 @@ fun AllianceScreen(
             when (selectedTab) {
                 0 -> AllianceOverviewTab()
                 1 -> AllianceMembersTab()
-                2 -> AllianceDiplomacyTab()
-                3 -> AllianceWarTab()
+                2 -> {
+                    // Chat Tab
+                    AllianceChatComponent(
+                        messages = chatMessages,
+                        currentUsername = "Player", // TODO: Get from user state
+                        onSendMessage = { message ->
+                            viewModel.sendChatMessage(message)
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                3 -> AllianceDiplomacyTab()
+                4 -> AllianceWarTab()
             }
         }
     }
