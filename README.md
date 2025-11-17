@@ -1,6 +1,6 @@
-# Battle Dawn - Android Recreation
+# Battle Dawn - Complete MMORTS Recreation
 
-An ultra-modern recreation of the popular browser-based MMORTS game [Battle Dawn](https://www.battledawn.com/) for Android devices, built with cutting-edge technologies and best practices.
+An ultra-modern, full-stack recreation of the popular browser-based MMORTS game [Battle Dawn](https://www.battledawn.com/) with Android client and Node.js backend server, built with cutting-edge technologies and best practices.
 
 ## Overview
 
@@ -12,7 +12,10 @@ Battle Dawn is a massively multiplayer online real-time strategy game where play
 - Conquer territories and compete for world domination
 - Use advanced warfare tactics including spies, nuclear missiles, and ion cannons
 
-This Android recreation brings the full Battle Dawn experience to mobile devices with an optimized touch interface and modern visual design.
+This complete recreation includes:
+- **Android Client**: Native Android app with Jetpack Compose UI
+- **Backend Server**: Node.js/TypeScript server with real-time multiplayer
+- **Full Feature Parity**: ~100% implementation of original game mechanics
 
 ## Features
 
